@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const user = axios.create({
-  baseURL: "http://localhost:5800/api/users", // Adjust based on your backend URL
+  baseURL: "https://user-profile-backend-k1b0.onrender.com/users", // Adjust based on your backend URL
   headers: {
     "Content-Type": "application/json",
   },
