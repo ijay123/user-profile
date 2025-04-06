@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../api/user";
-import Notification from "./Notification"; // Import Notification component
+import Notification from "./Notification"; 
 
 const CreateUser = () => {
   const navigate = useNavigate();

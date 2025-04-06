@@ -1,24 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state to show or hide
-  const [user, setUser] = useState({
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-  }); // User data that can be updated
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null); // Initialize as null or empty object
   const navigate = useNavigate();
 
-  // Open the modal
+  useEffect(() => {
+    // Replace with actual API call to fetch user data
+    const fetchUserData = async () => {
+      try {
+        // Simulate fetching user data (replace with actual fetch logic)
+        const response = await fetch("/api/user/1");
+        const data = await response.json();
+        setUser(data); // Set the fetched user data
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const handleModalOpen = () => {
     setIsModalOpen(true);
   };
 
-  // Close the modal
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
+
+  if (!user) {
+    return <div className="text-center mt-10">Loading...</div>;
+  }
 
   return (
     <div className="px-[60px]">
@@ -47,7 +61,7 @@ const Home = () => {
             <td className="border p-[10px]">{user.email}</td>
             <td className="border p-[10px] flex justify-center gap-[20px]">
               <button
-                onClick={handleModalOpen} // Open the modal
+                onClick={handleModalOpen}
                 className="border-none w-[60px] h-[40px] bg-[green] text-[white] rounded-[5px]"
               >
                 Edit
@@ -60,13 +74,11 @@ const Home = () => {
         </tbody>
       </table>
 
-      {/* Modal to Edit User */}
       {isModalOpen && (
         <div className=" ">
-        {/* bg-[rgba(0,0,0,0.5)] */}
-          <div className="bg-white p-[30px] top-[0] absolute  rounded-[10px]">
+          <div className="bg-white p-[30px] top-[0] absolute rounded-[10px]">
             <button
-              onClick={handleModalClose} // Close the modal when clicked
+              onClick={handleModalClose}
               className="mb-[30px] ml-[50px] px-[40px] py-[10px] text-[20px] bg-[green] text-[white] border-none rounded-[8px]"
             >
               Back

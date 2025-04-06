@@ -1,9 +1,9 @@
 import React from "react";
 
 const UserDetails = ({ user, onClose }) => {
-  console.log('Received UserDetails user object:', user);
-  
-  if (!user || typeof user !== 'object') {
+  console.log("Received UserDetails user object:", user);
+
+  if (!user || typeof user !== "object") {
     return (
       <div className="absolute top-[0px] left-[0px] w-[100%] h-[100%] flex justify-center bg-[rgba(0,0,0,0.5)]">
         <div className="bg-[white] p-[15px] rounded-lg w-[40%] h-[40%] my-[auto]">
@@ -25,11 +25,27 @@ const UserDetails = ({ user, onClose }) => {
   return (
     <div className="absolute top-[0px] left-[0px] w-[100%] h-[100%] flex justify-center bg-[rgba(0,0,0,0.5)]">
       <div className="bg-[white] p-[15px] rounded-lg w-[50%] h-[50%] my-[auto] flex flex-col ">
-        <h1 className="text-[5 flex justify-center font-bold mb-[40px]">User Details</h1>
+        <h1 className="text-[5 flex justify-center font-bold mb-[40px]">
+          User Details
+        </h1>
         <div className="space-y-[15px] px-[30px] text-[20px]">
-          {user._id && <p><span className="font-medium text-[green]">ID:</span> {user._id}</p>}
-          {user.name && <p><span className="font-medium text-[green]">Name:</span> {user.name}</p>}
-          {user.email && <p><span className="font-medium text-[green]">Email:</span> {user.email}</p>}
+          {user._id && (
+            <p>
+              <span className="font-medium text-[green]">ID:</span> {user._id}
+            </p>
+          )}
+          {user.name && (
+            <p>
+              <span className="font-medium text-[green]">Name:</span>{" "}
+              {user.name}
+            </p>
+          )}
+          {user.email && (
+            <p>
+              <span className="font-medium text-[green]">Email:</span>{" "}
+              {user.email}
+            </p>
+          )}
         </div>
         <button
           onClick={onClose}
