@@ -1,28 +1,23 @@
 import User from "../../model/user/user.js";
 import httpStatus from "http-status";
-import { paginate } from "../../util/paginate.js";
 
 const createUser = async (req, res) => {
   const data = req.body;
 
-  const emailExist = await User.findOne({
-    name: data.name,
-  });
+  const emailExist = await User.findOne({ name: data.name });
   if (emailExist) {
-    res.status(httpStatus.BAD_REQUEST).json({
+    return res.status(httpStatus.BAD_REQUEST).json({
       status: "error",
-      message: "User with email already exist",
+      message: "User with email already exists",
     });
-    return;
   }
 
   const createdUser = await User.create({
     name: data.name,
-
     email: data.email,
   });
 
-  res.status(httpStatus.CREATED).json({
+  return res.status(httpStatus.CREATED).json({
     status: "success",
     data: createdUser,
   });
@@ -30,25 +25,14 @@ const createUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const search = req.query.search || "";
+    const users = await User.find().sort({ createdAt: -1 });
 
-    const query = {
-      $or: [
-        { name: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-      ],
-    };
-
-    const result = await paginate("User", query, page, limit);
-
-    res.status(httpStatus.OK).json({
+    return res.status(httpStatus.OK).json({
       status: "success",
-      data: result,
+      users,
     });
   } catch (error) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       status: "error",
       message: "Something went wrong",
     });
@@ -67,12 +51,12 @@ const getUser = async (req, res) => {
       });
     }
 
-    res.status(httpStatus.OK).json({
+    return res.status(httpStatus.OK).json({
       status: "success",
       data: user,
     });
   } catch (error) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       status: "error",
       message: "Failed to fetch user",
     });
@@ -80,50 +64,60 @@ const getUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const { name, email } = req.body;
-  const { id } = req.params;
-  const payload = { ...req.body };
-  delete payload._id;
-  delete payload.__v;
-  delete payload.createdAt;
-  delete payload.updatedAt;
+  try {
+    const { id } = req.params;
+    const { name, email } = req.body;
 
-  const foundUser = await User.findOne({ _id: id });
-  if (!foundUser) {
-    res.status(httpStatus.NOT_FOUND).json({
+    const foundUser = await User.findById(id);
+    if (!foundUser) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        status: "error",
+        message: "User not found",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { name, email },
+      { new: true }
+    );
+
+    return res.status(httpStatus.OK).json({
+      status: "success",
+      data: updatedUser,
+    });
+  } catch (error) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       status: "error",
-      message: "User not found",
+      message: "Failed to update user",
     });
   }
-
-  const updatedUser = await User.findByIdAndUpdate(
-    id,
-    { name: name, email: email },
-    { new: true }
-  );
-
-  res.status(httpStatus.OK).json({
-    status: "success",
-    data: updatedUser,
-  });
 };
 
 const deleteUser = async (req, res) => {
-  const { id } = req.params;
-  const foundUser = await User.findOne({ _id: id });
-  if (!foundUser) {
-    res.status(httpStatus.NOT_FOUND).json({
+  try {
+    const { id } = req.params;
+
+    const foundUser = await User.findById(id);
+    if (!foundUser) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        status: "error",
+        message: "User not found",
+      });
+    }
+
+    await User.findByIdAndDelete(id);
+
+    return res.status(httpStatus.OK).json({
+      status: "success",
+      data: `User with ID ${id} is deleted`,
+    });
+  } catch (error) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       status: "error",
-      message: "User not found",
+      message: "Failed to delete user",
     });
   }
-
-  await User.findByIdAndDelete(id);
-
-  res.status(httpStatus.OK).json({
-    status: "success",
-    data: `User with ID ${id} is deleted`,
-  });
 };
 
 export { createUser, getUsers, getUser, updateUser, deleteUser };

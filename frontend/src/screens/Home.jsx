@@ -9,11 +9,6 @@ const Home = () => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedUserDetails, setSelectedUserDetails] = useState(null);
   const [users, setUsers] = useState([]);
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalRecords: 0,
-  });
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -21,16 +16,8 @@ const Home = () => {
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
-        const response = await getUsers();
-        const usersData = response.users || [];
-        const paginationData = {
-          currentPage: response.pagination?.currentPage || 1,
-          totalPages: response.pagination?.totalPages || 1,
-          totalRecords: response.pagination?.totalCount || usersData.length,
-        };
-
-        setUsers(usersData);
-        setPagination(paginationData);
+        const usersData = await getUsers();
+        setUsers(usersData || []);
       } catch (err) {
         console.error("Error fetching users:", err.message);
         setUsers([]);
@@ -39,7 +26,7 @@ const Home = () => {
       }
     };
     console.log("Updated selected user details:", selectedUserDetails);
-    console.log('New user data:', selectedUser);
+    console.log("New user data:", selectedUser);
 
     fetchUsers();
   }, [selectedUserDetails, selectedUser]);
@@ -60,19 +47,14 @@ const Home = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const {
-        _id,
-        __v,
-        createdAt,
-        updatedAt,
-        ...sanitizedUserData
-      } = selectedUser;
-  
-      console.log('Updating user with ID:', _id);
-      console.log('Sanitized data:', sanitizedUserData);
-  
+      const { _id, __v, createdAt, updatedAt, ...sanitizedUserData } =
+        selectedUser;
+
+      console.log("Updating user with ID:", _id);
+      console.log("Sanitized data:", sanitizedUserData);
+
       const response = await updateUser(_id, sanitizedUserData);
-  
+
       if (response && response.success) {
         const updatedUsers = users.map((u) =>
           u._id === _id ? { ...u, ...sanitizedUserData } : u
@@ -80,15 +62,16 @@ const Home = () => {
         setUsers(updatedUsers);
         handleModalClose();
       } else {
-        console.error('Update failed:', response.message);
-        alert('Failed to update user: ' + (response.message || 'Unknown error'));
+        console.error("Update failed:", response.message);
+        alert(
+          "Failed to update user: " + (response.message || "Unknown error")
+        );
       }
     } catch (err) {
       console.error("Error updating user:", err);
-      alert('Error updating user: ' + err.message);
+      alert("Error updating user: " + err.message);
     }
   };
-  
 
   const handleDelete = async (id) => {
     try {
@@ -101,16 +84,14 @@ const Home = () => {
 
   const handleViewDetails = async (userId) => {
     try {
-      console.log('Fetching user details for ID:', userId);
+      console.log("Fetching user details for ID:", userId);
       const response = await getUser(userId);
-      console.log('Received user details:', response);
-  
-      // Ensure the response is valid
-      if (response && response.data) {
-        setSelectedUserDetails(response.data); // Assuming `response.user` is the correct structure
+      console.log("Received user details:", response);
 
+      if (response && response.data) {
+        setSelectedUserDetails(response.data);
       } else {
-        console.error('No user data received');
+        console.error("No user data received");
       }
       setIsDetailsOpen(true);
     } catch (err) {
@@ -118,7 +99,6 @@ const Home = () => {
       setSelectedUserDetails(null);
     }
   };
-  
 
   const handleDetailsClose = () => {
     setIsDetailsOpen(false);
@@ -149,7 +129,7 @@ const Home = () => {
         <tbody>
           {isLoading ? (
             <tr>
-              <td colSpan="4" className="text-center py-4">
+              <td colSpan="5" className="text-center py-4">
                 <div className="flex justify-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
                 </div>
@@ -187,25 +167,13 @@ const Home = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="4" className="text-center py-4">
+              <td colSpan="5" className="text-center py-4">
                 {isLoading ? "" : "No users found"}
               </td>
             </tr>
           )}
         </tbody>
       </table>
-      {pagination?.totalPages && (
-        <div className="flex justify-center mt-4">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <p className="text-gray-700">
-              Page {pagination.currentPage} of {pagination.totalPages}
-              {pagination.totalRecords && (
-                <span> ({pagination.totalRecords} total records)</span>
-              )}
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Modal to Edit User */}
       {isModalOpen && (
@@ -213,7 +181,7 @@ const Home = () => {
           <div className="w-[80%] bg-[white] my-[70px]">
             <div className="mt-[70px] w-[100%]">
               <button
-                onClick={handleModalClose} // Close the modal when the "Back" button is clicked
+                onClick={handleModalClose}
                 className="mb-[30px] ml-[50px] px-[40px] py-[10px] text-[20px] bg-[green] text-[white] border-none rounded-[8px]"
               >
                 Back
@@ -256,10 +224,7 @@ const Home = () => {
 
       {/* User Details Modal */}
       {isDetailsOpen && (
-        <UserDetails
-          user={selectedUserDetails}
-          onClose={handleDetailsClose}
-        />
+        <UserDetails user={selectedUserDetails} onClose={handleDetailsClose} />
       )}
     </div>
   );
