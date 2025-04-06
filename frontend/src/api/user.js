@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const user = axios.create({
-  baseURL: "http://localhost:5800/api/users", // Corrected: double slash after http:
+  baseURL: `${import.meta.env.VITE_USER_PROFILE_BACKEND_URL}/users`,
   headers: {
     "Content-Type": "application/json",
   },
