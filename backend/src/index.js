@@ -16,7 +16,7 @@ const { NODE_ENV, PORT } = process.env;
 
 // app general use
 
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
 app.use(express.json());
 app.use(helmet());

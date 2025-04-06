@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const user = axios.create({
-  baseURL: `${import.meta.env.VITE_USER_PROFILE_BACKEND_URL}/users`,
+  baseURL: `${import.meta.env.VITE_USER_PROFILE_BACKEND_URL}/api/users`,
   headers: {
     "Content-Type": "application/json",
   },
