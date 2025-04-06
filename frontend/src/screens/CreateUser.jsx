@@ -23,7 +23,7 @@ const CreateUser = () => {
     e.preventDefault();
     try {
       const newUser = await createUser(formData);
-      setMessage(`User ${newUser.name} created successfully!`);
+      setMessage(`User ${newUser.data.name} created successfully!`);
       setType("success");
       setFormData({ name: "", email: "" }); 
     } catch (err) {
@@ -74,7 +74,7 @@ const CreateUser = () => {
         <div>
           <button
             type="submit"
-            className="mt-[60px] px-[50px] py-[10px] text-[18px] bg-[green] text-[white] rounded-[8px]"
+            className="mt-[60px] px-[50px] py-[10px] border-none text-[18px] bg-[green] text-[white] rounded-[8px]"
           >
             Create User
           </button>

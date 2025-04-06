@@ -123,7 +123,7 @@ const Home = () => {
       <div className="text-[50px] text-green-500 flex justify-center mt-[30px]">
         Users Profile
       </div>
-      <div className="flex justify-between mx-[100px] mb-[20px] mt-[70px]">
+      <div className="flex sm:flex-col lg:flex-row justify-between mx-[100px] mb-[20px] mt-[70px]">
         <button
           onClick={() => navigate("/createUser")}
           className="bg-[green] px-[70px] py-[20px] border-none text-[white] text-[20px] mb-[50px]  rounded-[10px]"
