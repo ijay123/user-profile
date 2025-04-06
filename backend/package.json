@@ -1,7 +1,7 @@
 {
-  "name": "game-app",
+  "name": "user-profile",
   "version": "1.0.0",
-  "description": "This app stores scores from played game",
+  "description": "This app displays the user profile",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -9,8 +9,9 @@
     "start": "node src/index.js"
   },
   "keywords": [
-    "game",
-    "due-date"
+    "email",
+    "name"
+    
   ],
   "author": "Ijeoma Igbokwe",
   "license": "ISC",

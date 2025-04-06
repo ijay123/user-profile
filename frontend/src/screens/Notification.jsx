@@ -19,7 +19,7 @@ const Notification = ({ message, type, onClose }) => {
         </div>
         <button
           onClick={onClose}
-          className="px-[30px] py-[15px] text-[white] bg-[gray] mt-[50px] border-none rounded-[8px] hover:bg-[gray]"
+          className="px-[30px] py-[15px] text-[white] bg-[blue] mt-[50px] border-none rounded-[8px] hover:bg-[gray]"
         >
           Close
         </button>

@@ -22,10 +22,10 @@ const CreateUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const newUser = await createUser(formData); // Call the createUser method
+      const newUser = await createUser(formData);
       setMessage(`User ${newUser.name} created successfully!`);
       setType("success");
-      setFormData({ name: "", email: "" }); // Reset form data
+      setFormData({ name: "", email: "" }); 
     } catch (err) {
       setMessage(err.message);
       setType("error");
@@ -33,7 +33,7 @@ const CreateUser = () => {
   };
 
   const handleCloseNotification = () => {
-    setMessage(""); // Close the notification by resetting the message
+    setMessage(""); 
   };
 
   return (
@@ -86,7 +86,7 @@ const CreateUser = () => {
         <Notification
           message={message}
           type={type}
-          onClose={handleCloseNotification} // Close the notification on button click
+          onClose={handleCloseNotification} 
         />
       )}
     </div>

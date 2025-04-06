@@ -26,7 +26,7 @@ if (NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// the first position is always the request while the second is the response
+
 app.use("/api/users", UserRoute);
 
 app.get("/", (req, res) => {

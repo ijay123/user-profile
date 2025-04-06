@@ -6,7 +6,7 @@ export const createUserSchema = Joi.object({
 });
 
 export const getUserSchema = Joi.object({
-  id: Joi.string().optional(), // Validating `id` from the URL param
+  id: Joi.string().optional(),
 });
 
 export const getUsersSchema = Joi.object({
@@ -19,7 +19,7 @@ export const updateUserSchema = Joi.object({
   name: Joi.string().optional(),
   email: Joi.string().optional(),
 })
-  .or("name", "email") // At least one field must be provided
+  .or("name", "email")
   .unknown(false); // Disallow unknown fields (like _id, createdAt, updatedAt, etc.)
 
 export const deleteUserSchema = Joi.object({

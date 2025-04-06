@@ -20,13 +20,22 @@ const createUser = async (userData) => {
 };
 
 // Get All Users (pagination removed)
-const getUsers = async () => {
+const getUsers = async (search = "") => {
   try {
-    const response = await user.get("/");
-    const users = response.data.users;
+    // Add the search query to the API request
+    const response = await user.get("/", {
+      params: { search }, // passing search as a query parameter
+    });
+
+    // Log the entire response object for debugging
+    console.log("Full Response:", response);
+
+    const users = response.data?.users || []; // Ensure users is always an array
     console.log("Users Data:", users);
+
     return users;
   } catch (err) {
+    // Log the error and its details
     console.error("Error in getUsers:", err);
     throw new Error(err.response?.data?.message || "Failed to fetch users");
   }

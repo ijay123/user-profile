@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUsers, deleteUser, updateUser, getUser } from "../api/user";
 import UserDetails from "./UserDetails";
+import Notification from "./Notification";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -11,12 +12,14 @@ const Home = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [notification, setNotification] = useState({ message: "", type: "" });
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
-        const usersData = await getUsers();
+        const usersData = await getUsers(search);
         setUsers(usersData || []);
       } catch (err) {
         console.error("Error fetching users:", err.message);
@@ -29,7 +32,11 @@ const Home = () => {
     console.log("New user data:", selectedUser);
 
     fetchUsers();
-  }, [selectedUserDetails, selectedUser]);
+  }, [selectedUserDetails, selectedUser, search]);
+
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+  };
 
   const handleModalOpen = (user) => {
     setSelectedUser(user);
@@ -47,7 +54,7 @@ const Home = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const { _id, __v, createdAt, updatedAt, ...sanitizedUserData } =
+      const { _id, __v, createdAt: CREATED_AT, updatedAt: UPDATED_AT, ...sanitizedUserData } =
         selectedUser;
 
       console.log("Updating user with ID:", _id);
@@ -61,15 +68,16 @@ const Home = () => {
         );
         setUsers(updatedUsers);
         handleModalClose();
+        showNotification("User updated successfully!", "success");
       } else {
-        console.error("Update failed:", response.message);
-        alert(
-          "Failed to update user: " + (response.message || "Unknown error")
+        showNotification(
+          "Failed to update user: " + (response.message || "Unknown error"),
+          "error"
         );
       }
     } catch (err) {
       console.error("Error updating user:", err);
-      alert("Error updating user: " + err.message);
+      showNotification("Error updating user: " + err.message, "error");
     }
   };
 
@@ -77,8 +85,9 @@ const Home = () => {
     try {
       await deleteUser(id);
       setUsers(users.filter((user) => user._id !== id));
+      showNotification("User deleted successfully!", "success");
     } catch (err) {
-      console.error("Error deleting user:", err.message);
+      showNotification("Error deleting user: " + err.message, "error");
     }
   };
 
@@ -105,17 +114,30 @@ const Home = () => {
     setSelectedUserDetails(null);
   };
 
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value); // Update search term
+  };
+
   return (
     <div className="px-[60px]">
       <div className="text-[50px] text-green-500 flex justify-center mt-[30px]">
         Users Profile
       </div>
-      <button
-        onClick={() => navigate("/createUser")}
-        className="bg-[green] px-[70px] py-[20px] border-none text-[white] text-[20px] mb-[50px] mt-[70px] rounded-[10px]"
-      >
-        Add User
-      </button>
+      <div className="flex justify-between mx-[100px] mb-[20px] mt-[70px]">
+        <button
+          onClick={() => navigate("/createUser")}
+          className="bg-[green] px-[70px] py-[20px] border-none text-[white] text-[20px] mb-[50px]  rounded-[10px]"
+        >
+          Add User
+        </button>
+        <input
+          value={search} // Bind search state to input
+          onChange={handleSearchChange}
+          className=" w-[250px] h-[50px] outline-none rounded-[10px] text-[18px] pl-[10px]"
+          placeholder="Search name or email"
+        />
+      </div>
+
       <table className="table-auto border-collapse mx-auto mt-5 w-[80%]">
         <thead>
           <tr>
@@ -144,7 +166,7 @@ const Home = () => {
                 <td className="border p-[10px]">
                   <button
                     onClick={() => handleViewDetails(user._id)}
-                    className="bg-[blue] text-white px-[10px] py-[5px] rounded-[5px] border-none"
+                    className="bg-[blue] text-[white] px-[10px] py-[5px] rounded-[5px] border-none"
                   >
                     View details
                   </button>
@@ -225,6 +247,14 @@ const Home = () => {
       {/* User Details Modal */}
       {isDetailsOpen && (
         <UserDetails user={selectedUserDetails} onClose={handleDetailsClose} />
+      )}
+
+      {notification.message && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification({ message: "", type: "" })}
+        />
       )}
     </div>
   );

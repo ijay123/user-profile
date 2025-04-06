@@ -24,7 +24,7 @@ router
 // Get, Update, and Delete User by ID (GET, PATCH, DELETE)
 router
   .route("/:id")
-  .get(validationMiddleware(getUserSchema, "params"), getUser) // Changed 'QUERY' to 'params' for validation
+  .get(validationMiddleware(getUserSchema, "params"), getUser) 
   .patch(validationMiddleware(updateUserSchema), updateUser)
   .delete(validationMiddleware(deleteUserSchema), deleteUser);
 

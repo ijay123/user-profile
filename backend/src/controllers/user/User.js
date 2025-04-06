@@ -25,19 +25,36 @@ const createUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find().sort({ createdAt: -1 });
+    const { search = "" } = req.query; 
+    
+    let users;
 
-    return res.status(httpStatus.OK).json({
+    if (search) {
+      
+      users = await User.find({
+        $or: [
+          { name: { $regex: search, $options: "i" } }, 
+          { email: { $regex: search, $options: "i" } } 
+        ]
+      }).sort({ createdAt: -1 });
+    } else {
+     
+      users = await User.find().sort({ createdAt: -1 });
+    }
+
+    return res.status(200).json({
       status: "success",
       users,
     });
   } catch (error) {
-    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+    console.error("Error fetching users:", error);
+    return res.status(500).json({
       status: "error",
       message: "Something went wrong",
     });
   }
 };
+
 
 const getUser = async (req, res) => {
   try {
